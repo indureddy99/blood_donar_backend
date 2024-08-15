@@ -8,7 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon"
   },
-  "author": "abhay",
+  "author": "indu",
   "license": "ISC",
   "dependencies": {
     "@rodrigogs/mysql-events": "^0.6.0",
