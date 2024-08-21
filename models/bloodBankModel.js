@@ -1,9 +1,9 @@
 import { db } from "../config/dbConfig.js";
 import { execQuery } from "../utils/dbUtil.js";
 
-// Model function to create a new blood bank entry
 export const createBloodBankMdl = function (bloodBankData, callback) {
     const {
+        blood_bank_name, // New field
         location,
         blood_type,
         amount_of_blood,
@@ -13,12 +13,14 @@ export const createBloodBankMdl = function (bloodBankData, callback) {
 
     const query = `
         INSERT INTO \`blood_bank\` (
+            \`blood_bank_name\`,
             \`location\`,
             \`blood_type\`,
             \`amount_of_blood\`,
             \`expiry_date\`,
             \`user_id\`
         ) VALUES (
+            '${blood_bank_name}',
             '${location}',
             '${blood_type}',
             '${amount_of_blood}',
@@ -52,6 +54,7 @@ export const getBloodBankByIdMdl = function (id, callback) {
 // Model function to update a blood bank entry
 export const updateBloodBankMdl = function (id, updatedBloodBankData, callback) {
     const {
+        blood_bank_name,
         location,
         blood_type,
         amount_of_blood,
@@ -62,6 +65,7 @@ export const updateBloodBankMdl = function (id, updatedBloodBankData, callback) 
     const query = `
         UPDATE \`blood_bank\`
         SET 
+            \`blood_bank_name\` = '${blood_bank_name}',
             \`location\` = '${location}',
             \`blood_type\` = '${blood_type}',
             \`amount_of_blood\` = '${amount_of_blood}',

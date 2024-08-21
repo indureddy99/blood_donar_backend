@@ -9,6 +9,7 @@ import {
 // Controller to create a new blood bank entry
 export const createBloodBankCtrl = (req, res) => {
     const bloodBankData = {
+        blood_bank_name: req.body.blood_bank_name,
         location: req.body.location,
         blood_type: req.body.blood_type,
         amount_of_blood: req.body.amount_of_blood,
@@ -18,6 +19,7 @@ export const createBloodBankCtrl = (req, res) => {
 
     createBloodBankMdl(bloodBankData, (err, results) => {
         if (err) {
+            console.log(err)
             return res.status(400).json({ status: 400, message: "Failed to create the blood bank entry" });
         }
         res.status(201).json({ status: 201, message: "Blood bank entry created successfully" });
