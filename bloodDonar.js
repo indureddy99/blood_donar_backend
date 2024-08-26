@@ -141,7 +141,24 @@ app.put('/blood-requests/:request_id/status', (req, res) => {
 
 // Fetch blood requests
 app.get('/blood-requests', (req, res) => {
-    const query = `SELECT * FROM blood_requests`;
+    const query = `
+        SELECT 
+            br.request_id,
+            br.blood_type,
+            br.amount_needed,
+            br.request_date,
+            br.status,
+            u.first_name,
+            u.last_name,
+            bb.blood_bank_name,
+            bb.location
+        FROM 
+            blood_requests br
+        JOIN 
+            user u ON br.user_id = u.user_id
+        JOIN 
+            blood_bank bb ON br.blood_bank_id = bb.blood_bank_id
+    `;
     
     db.query(query, (err, results) => {
         if (err) {
@@ -152,10 +169,18 @@ app.get('/blood-requests', (req, res) => {
     });
 });
 
-// Fetch blood requests by user_id
+
+// Fetch blood requests by user_id 
 app.get('/blood-requests/:user_id', (req, res) => {
     const { user_id } = req.params;
-    const query = `SELECT * FROM blood_requests WHERE user_id = ?`;
+
+    // Query to fetch blood requests along with blood bank name
+    const query = `
+        SELECT br.*, bb.blood_bank_name,bb.location
+        FROM blood_requests br
+        JOIN blood_bank bb ON br.blood_bank_id = bb.blood_bank_id
+        WHERE br.user_id = ?
+    `;
     
     db.query(query, [user_id], (err, results) => {
         if (err) {
@@ -166,10 +191,28 @@ app.get('/blood-requests/:user_id', (req, res) => {
     });
 });
 
+
 // Fetch blood donations
 app.get('/blood-donations', (req, res) => {
-    const query = `SELECT *FROM blood_donations`;
-    
+    const query = `
+        SELECT 
+            bd.donation_id,
+            CONCAT(u.first_name, ' ', u.last_name) AS donor_name,
+            bd.blood_type,
+            bd.amount_of_blood,
+            bd.donation_date,
+            bd.expiry_date,
+            bd.status,
+            bb.blood_bank_name,
+            bb.location
+        FROM 
+            blood_donations bd
+        JOIN 
+            user u ON bd.user_id = u.user_id
+        JOIN 
+            blood_bank bb ON bd.blood_bank_id = bb.blood_bank_id
+    `;
+
     db.query(query, (err, results) => {
         if (err) {
             console.error('Error fetching blood donations:', err);
@@ -178,10 +221,18 @@ app.get('/blood-donations', (req, res) => {
         res.json({ status: 200, data: results });
     });
 });
+
 // Fetch blood donations by user_id
 app.get('/blood-donations/:user_id', (req, res) => {
     const { user_id } = req.params;
-    const query = `SELECT * FROM blood_donations WHERE user_id = ?`;
+
+    // Query to fetch blood donations along with blood bank name
+    const query = `
+        SELECT bd.*, bb.blood_bank_name,bb.location
+        FROM blood_donations bd
+        JOIN blood_bank bb ON bd.blood_bank_id = bb.blood_bank_id
+        WHERE bd.user_id = ?
+    `;
     
     db.query(query, [user_id], (err, results) => {
         if (err) {
@@ -191,6 +242,7 @@ app.get('/blood-donations/:user_id', (req, res) => {
         res.json({ status: 200, data: results });
     });
 });
+
 
 
 app.use('/blood_donar/autenticate', autenticationRoute);
